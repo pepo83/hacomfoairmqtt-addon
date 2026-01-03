@@ -9,8 +9,8 @@ LABEL version="0.1"
 LABEL description="Docker image for hacomfoairmqtt and serial over IP"
 
 ENV SOCAT="True"
-ENV COMFOAIR_IP="192.168.1.50"
-ENV COMFOAIR_PORT="502"
+ENV COMFOAIR_IP="192.168.40.130
+ENV COMFOAIR_PORT="8899"
 ENV SERIAL_PORT="/dev/comfoair"
 ENV RS485_PROTOCOL="False"
 ENV REFRESH_INTERVAL="10"

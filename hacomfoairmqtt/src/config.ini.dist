@@ -22,7 +22,7 @@ SetUpFanLevelsAtStart=True
 
 [MQTT]
 # MQTT broker - IP
-MQTTServer=10.144.1.103
+MQTTServer=192.168.40.100
 # MQTT broker - Port
 MQTTPort=1883
  # MQTT broker - keepalive

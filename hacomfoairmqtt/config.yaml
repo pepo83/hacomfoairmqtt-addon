@@ -1,0 +1,40 @@
+name: Hacomfoair MQTT
+slug: hacomfoairmqtt
+version: "1.1.0"
+description: ComfoAir via Waveshare RS232-to-WiFi (TCP)
+startup: services
+boot: auto
+init: false
+
+arch:
+  - amd64
+  - aarch64
+  - armv7
+  - armhf
+
+options:
+  serial_type: tcp
+  tcp_host: 192.168.40.130
+  tcp_port: 8899
+
+  mqtt_host: core-mosquitto
+  mqtt_port: 1883
+  mqtt_username: "hacomfoairmqtt"
+  mqtt_password: "hacomfoairmqtt"
+  mqtt_base_topic: comfoair
+  ha_discovery: true
+
+schema:
+  serial_type: list(tcp)
+  tcp_host: str
+  tcp_port: int
+
+  mqtt_host: str
+  mqtt_port: int
+  mqtt_username: str?
+  mqtt_password: password?
+  mqtt_base_topic: str
+  ha_discovery: bool
+
+services:
+  - mqtt:need

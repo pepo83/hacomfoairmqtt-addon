@@ -6,8 +6,8 @@ services:
     container_name: comfoair
     environment:
       - SOCAT=True
-      - COMFOAIR_IP=192.168.1.50
-      - COMFOAIR_PORT=502
+      - COMFOAIR_IP=192.168.40.130
+      - COMFOAIR_PORT=8899
       - SERIAL_PORT=/dev/comfoair350
       - RS485_PROTOCOL=False
       - REFRESH_INTERVAL=10
@@ -22,11 +22,11 @@ services:
       - FAN_IN_MID=50
       - FAN_IN_HIGH=70
       - SETUP_FAN_LEVELS_AT_START=True
-      - MQTT_SERVER=mosquitto.domain.tld
+      - MQTT_SERVER=192.168.40.100
       - MQTT_PORT=1883
       - MQTT_KEEPALIVE=45
-      - MQTT_USER=username
-      - MQTT_PASSWORD=password
+      - MQTT_USER=hacomfoairmqtt
+      - MQTT_PASSWORD=hacomfoairmqtt
       - HA_ENABLE_AUTO_DISCOVERY_SENSORS=True
       - HA_ENABLE_AUTO_DISCOVERY_CLIMATE=True
       - HA_AUTO_DISCOVERY_DEVICE_ID=ca350
