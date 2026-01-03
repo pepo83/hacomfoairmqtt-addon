@@ -33,7 +33,7 @@ sed \
 if [ "$SOCAT" == "True" ]; then
     echo "create serial device over ethernet with socat for ip $COMFOAIR_IP:$COMFOAIR_PORT"
     /usr/bin/socat -d -d pty,link="$SERIAL_PORT",raw,group-late=dialout,mode=660 tcp:"$COMFOAIR_IP":"$COMFOAIR_PORT" &
-    export SERIAL_DEVICE=/dev/comfoair
+    export SERIAL_DEVICE=
 else
     echo "don't create serial device over ehternet. enable it with SOCAT=True"
 fi
