@@ -33,7 +33,7 @@ WORKDIR /app
 
 COPY src/ /app/
 
-RUN pip3 install --no-cache-dir -r /app/requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt
 
 COPY run.sh /app/run.sh
 RUN chmod +x /app/run.sh
