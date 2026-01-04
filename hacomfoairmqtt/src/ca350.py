@@ -21,6 +21,7 @@ start script with python3.7 ca350
 
 import paho.mqtt.client as mqtt
 import time
+import os
 import sys
 import json
 import socket
@@ -63,12 +64,11 @@ SetUpFanLevelsAtStart = options['SetUpFanLevelsAtStart']
 # MQTTPassword = options['MQTTPassword']        # MQTT broker - password - default: 0 (disabled/no authentication)
 
 # MQTT options from Home Assistant Supervisor
-mqtt_options = options.get("mqtt", {})
+mqtt_host = os.environ.get("MQTT_HOST", "core-mosquitto")
+mqtt_port = int(os.environ.get("MQTT_PORT", "1883"))
+mqtt_user = os.environ.get("MQTT_USER")
+mqtt_pass = os.environ.get("MQTT_PASS")
 
-mqtt_host = mqtt_options.get("host", "core-mosquitto")
-mqtt_port = mqtt_options.get("port", 1883)
-mqtt_user = mqtt_options.get("username")
-mqtt_pass = mqtt_options.get("password")
 
 HAEnableAutoDiscoverySensors = options['HAEnableAutoDiscoverySensors']  # Home Assistant send auto discovery for temperatures
 HAEnableAutoDiscoveryClimate = options['HAEnableAutoDiscoveryClimate']  # Home Assistant send auto discovery for climate
