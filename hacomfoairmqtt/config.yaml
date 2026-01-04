@@ -13,9 +13,8 @@ arch:
   - armhf
 
 options:
-  serial_type: tcp
-  tcp_host: 192.168.40.130
-  tcp_port: 8899
+  comfoair_host: "192.168.40.130"
+  comfoair_port: 8899
 
   mqtt_host: core-mosquitto
   mqtt_port: 1883

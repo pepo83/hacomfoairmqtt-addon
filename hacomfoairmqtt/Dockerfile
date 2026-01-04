@@ -1,14 +1,6 @@
-FROM python:slim
+ARG BUILD_FROM
+FROM $BUILD_FROM
 
-ARG VERSION
-
-ARG TARGETARCH
-
-LABEL maintainer="adorobis@gmail.com"
-LABEL version="0.1"
-LABEL description="Docker image for hacomfoairmqtt and serial over IP"
-
-ENV SOCAT="True"
 ENV COMFOAIR_IP="192.168.40.130"
 ENV COMFOAIR_PORT="8899"
 ENV SERIAL_PORT="/config/comfoair"
@@ -37,15 +29,13 @@ ENV HA_AUTO_DISCOVERY_DEVICE_NAME="CA350"
 ENV HA_AUTO_DISCOVERY_DEVICE_MANUFACTURER="Zehnder"
 ENV HA_AUTO_DISCOVERY_DEVICE_MODEL="ComfoAir 350"
 
-RUN apt update
-RUN apt upgrade -y
-RUN apt install -y socat python3-paho-mqtt python3-serial
+WORKDIR /app
 
+COPY src/ /app/
 
-RUN mkdir -p /opt/hacomfoairmqtt
-COPY src/ca350.py /opt/hacomfoairmqtt/ca350.py
-COPY src/config.ini.docker /opt/hacomfoairmqtt/config.ini.docker
+RUN pip3 install --no-cache-dir -r /app/requirements.txt
 
-COPY src/start.sh /usr/local/bin/start.sh
-RUN chmod 744 /usr/local/bin/start.sh
-CMD /usr/local/bin/start.sh
+COPY run.sh /app/run.sh
+RUN chmod +x /app/run.sh
+
+CMD ["/app/run.sh"]

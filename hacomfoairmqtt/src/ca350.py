@@ -21,11 +21,23 @@ start script with python3.7 ca350
 
 import paho.mqtt.client as mqtt
 import time
-import serial
 import sys
 import configparser
 import os
 import json
+import socket
+import logging
+
+logging.basicConfig(level=logging.INFO)
+
+with open("/data/options.json") as f:
+    options = json.load(f)
+
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.settimeout(2)
+sock.connect((options["comfoair_host"], options["comfoair_port"]))
+
+ser = sock   # WICHTIG: ser wird weiterverwendet
 
 # Read configuration from ini file
 config = configparser.ConfigParser()
@@ -1154,46 +1166,6 @@ while True:
         warning_msg('Can\'t connect to MQTT broker. Retrying in 10 seconds.')
         time.sleep(10)
         pass
-
-# Open the serial port
-try:
-    ser = serial.Serial(port = SerialPort, baudrate = 9600, bytesize = serial.EIGHTBITS, parity = serial.PARITY_NONE, stopbits = serial.STOPBITS_ONE)
-except:
-    warning_msg('Opening serial port exception:')
-    warning_msg(sys.exc_info())
-else:
-    if RS485_protocol == False: 
-        if enablePcMode:
-            set_pc_mode(3)
-        else:
-            set_pc_mode(0)  # If PC mode is disabled, deactivate it (in case it was activated in an earlier run)
-    if SetUpFanLevelsAtStart:
-        set_fan_levels(Intake=True, Exhaust=True)
-    mqttc.loop_start()
-    while True:
-        try:
-            if RS485_protocol == False:
-                get_temp()
-                get_fan_status()
-                get_ventilation_status()
-                get_filter_status()
-                get_filter_weeks()
-                get_filter_hours()
-                get_bypass_status()
-                get_preheating_status()
-                get_analog_sensor()
-                get_ewt()
-            else:
-                get_temp_rs485()
-                get_fan_status_rs485()
-                get_parameters1_rs485()
-                get_parameters2_rs485()
-            time.sleep(refresh_interval)
-            pass
-        except KeyboardInterrupt:
-            mqttc.loop_stop()
-            ser.close()
-            break
 
 
 # End of program
