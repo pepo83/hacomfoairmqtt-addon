@@ -1,15 +1,20 @@
 ARG BUILD_FROM
 FROM $BUILD_FROM
 
-# Python + benötigte Libs
-RUN apk add --no-cache \
-    python3 \
-    py3-paho-mqtt
+RUN apk add --no-cache python3 py3-virtualenv
 
 WORKDIR /app
 
-COPY src/ /app/
+# virtual env.
+RUN python3 -m venv /app/venv
+ENV PATH="/app/venv/bin:$PATH"
 
+# Python-depend.
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# App
+COPY src/ /app/
 COPY run.sh /app/run.sh
 RUN chmod +x /app/run.sh
 

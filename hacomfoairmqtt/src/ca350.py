@@ -36,7 +36,7 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.settimeout(2)
 sock.connect((options["comfoair_host"], options["comfoair_port"]))
 
-ser = sock   # WICHTIG: ser wird weiterverwendet
+ser = sock   #old ser port
 
 # Service Configuration
 RS485_protocol = options['RS485_protocol'] # Protocol type
@@ -265,8 +265,18 @@ def serial_command(cmd):
         ser.write(cmd)
         time.sleep(2)
 
-        while ser.inWaiting() > 0:
-            data += ser.read(1)
+        # while ser.inWaiting() > 0:
+        #     data += ser.read(1)
+        ser.settimeout(0.5)
+        try:
+            while True:
+                chunk = ser.recv(1)
+                if not chunk:
+                    break
+                data += chunk
+        except socket.timeout:
+            pass
+        
         if len(data) > 0:
             return data
         else:
@@ -939,6 +949,7 @@ def send_autodiscover(name, entity_id, entity_type, state_topic = None, device_c
     publish_message(mqtt_message, mqtt_config_topic)
 
 def on_connect(client, userdata, flags, reason_code, properties):
+    print("MQTT connected:", reason_code)
     publish_message("online","comfoair/status")
 	# Temporary: deletion of old topic for Fan entity auto discovery
     delete_message("homeassistant/fan/ca350_fan/config")
@@ -1138,6 +1149,7 @@ def on_connect(client, userdata, flags, reason_code, properties):
     topic_subscribe()
 
 def on_disconnect(client, userdata, flags, reason_code, properties):
+    print("MQTT disconnected:", reason_code)
     if reason_code != 0:
         warning_msg('Unexpected disconnection from MQTT, trying to reconnect')
         recon()
@@ -1147,9 +1159,10 @@ def on_disconnect(client, userdata, flags, reason_code, properties):
 ###
 
 # Connect to the MQTT broker
-mqttc = mqtt.Client(client_id="CA350")
+mqttc = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, 'CA350')
 if mqtt_user and mqtt_pass:
     mqttc.username_pw_set(mqtt_user, mqtt_pass)
+    
 
 # Define the mqtt callbacks
 mqttc.on_connect = on_connect
@@ -1159,6 +1172,19 @@ mqttc.will_set("comfoair/status",payload="offline", qos=0, retain=True)
 
 
 # Connect to the MQTT server
+# print("Connecting to MQTT Server...")
+# print(
+# "MQTT:",
+#     mqtt_host,
+#     mqtt_port,
+#     mqtt_user,
+#     "***" if mqtt_pass else None
+# )
+# mqttc.connect(mqtt_host, mqtt_port, 60)
+# mqttc.loop_start()
+
+
+
 while True:
     try:
         print("Connecting to MQTT Server...")
@@ -1170,12 +1196,46 @@ while True:
             "***" if mqtt_pass else None
         )
         mqttc.connect(mqtt_host, mqtt_port, 60)
-        mqttc.loop_start()
         break
     except:
         warning_msg('Can\'t connect to MQTT broker. Retrying in 10 seconds.')
         time.sleep(10)
         pass
+
+
+
+if RS485_protocol == False: 
+    if enablePcMode:
+        set_pc_mode(3)
+    else:
+        set_pc_mode(0)  # If PC mode is disabled, deactivate it (in case it was activated in an earlier run)
+if SetUpFanLevelsAtStart:
+    set_fan_levels(Intake=True, Exhaust=True)
+mqttc.loop_start()
+while True:
+    try:
+        if RS485_protocol == False:
+            get_temp()
+            get_fan_status()
+            get_ventilation_status()
+            get_filter_status()
+            get_filter_weeks()
+            get_filter_hours()
+            get_bypass_status()
+            get_preheating_status()
+            get_analog_sensor()
+            get_ewt()
+        else:
+            get_temp_rs485()
+            get_fan_status_rs485()
+            get_parameters1_rs485()
+            get_parameters2_rs485()
+        time.sleep(refresh_interval)
+        pass
+    except KeyboardInterrupt:
+        mqttc.loop_stop()
+        ser.close()
+        break
 
 
 # End of program
