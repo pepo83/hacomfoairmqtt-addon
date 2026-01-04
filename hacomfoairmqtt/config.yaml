@@ -29,11 +29,6 @@ options:
   FanInMid: 50
   FanInHigh: 70
   SetUpFanLevelsAtStart: false
-  MQTTServer: "192.168.40.100"
-  MQTTPort: 1883
-  MQTTKeepalive: 45
-  MQTTUser: "hacomfoairmqtt"
-  MQTTPassword: "hacomfoairmqtt"
   HAEnableAutoDiscoverySensors: true
   HAEnableAutoDiscoveryClimate: true
   HAAutoDiscoveryDeviceName: "CA350"
@@ -41,10 +36,6 @@ options:
   HAAutoDiscoveryDeviceManufacturer: "Zehnder"
   HAAutoDiscoveryDeviceModel: "Comfoair 350"
   
-  mqtt_host: "core-mosquitto"
-  mqtt_port: 1883
-  mqtt_username: "hacomfoairmqtt"
-  mqtt_password: "hacomfoairmqtt"
   mqtt_base_topic: "comfoair"
   ha_discovery: true
 
@@ -64,11 +55,6 @@ schema:
   FanInMid: int
   FanInHigh: int
   SetUpFanLevelsAtStart: bool
-  MQTTServer: str
-  MQTTPort: int
-  MQTTKeepalive: int
-  MQTTUser: str?
-  MQTTPassword: password?
   HAEnableAutoDiscoverySensors: bool
   HAEnableAutoDiscoveryClimate: bool
   HAAutoDiscoveryDeviceName: str
@@ -76,10 +62,6 @@ schema:
   HAAutoDiscoveryDeviceManufacturer: str
   HAAutoDiscoveryDeviceModel: str
   
-  mqtt_host: str
-  mqtt_port: int
-  mqtt_username: str?
-  mqtt_password: password?
   mqtt_base_topic: str
   ha_discovery: bool
 

@@ -56,11 +56,19 @@ FanInHigh = int(options['FanInHigh'])
 #Set fan levels at the start of the program. If false will be only controlled when fans are enabled or disabled.
 SetUpFanLevelsAtStart = options['SetUpFanLevelsAtStart']
 
-MQTTServer = options['MQTTServer']            # MQTT broker - IP
-MQTTPort = int(options['MQTTPort'])           # MQTT broker - Port
-MQTTKeepalive = int(options['MQTTKeepalive']) # MQTT broker - keepalive
-MQTTUser = options['MQTTUser']                # MQTT broker - user - default: 0 (disabled/no authentication)
-MQTTPassword = options['MQTTPassword']        # MQTT broker - password - default: 0 (disabled/no authentication)
+# MQTTServer = options['MQTTServer']            # MQTT broker - IP
+# MQTTPort = int(options['MQTTPort'])           # MQTT broker - Port
+# MQTTKeepalive = int(options['MQTTKeepalive']) # MQTT broker - keepalive
+# MQTTUser = options['MQTTUser']                # MQTT broker - user - default: 0 (disabled/no authentication)
+# MQTTPassword = options['MQTTPassword']        # MQTT broker - password - default: 0 (disabled/no authentication)
+
+# MQTT options from Home Assistant Supervisor
+mqtt_options = options.get("mqtt", {})
+
+mqtt_host = mqtt_options.get("host", "core-mosquitto")
+mqtt_port = mqtt_options.get("port", 1883)
+mqtt_user = mqtt_options.get("username")
+mqtt_pass = mqtt_options.get("password")
 
 HAEnableAutoDiscoverySensors = options['HAEnableAutoDiscoverySensors']  # Home Assistant send auto discovery for temperatures
 HAEnableAutoDiscoveryClimate = options['HAEnableAutoDiscoveryClimate']  # Home Assistant send auto discovery for climate
@@ -1140,8 +1148,8 @@ def on_disconnect(client, userdata, flags, reason_code, properties):
 
 # Connect to the MQTT broker
 mqttc = mqtt.Client(client_id="CA350")
-if  MQTTUser != False and MQTTPassword != False :
-    mqttc.username_pw_set(MQTTUser,MQTTPassword)
+if mqtt_user and mqtt_pass:
+    mqttc.username_pw_set(mqtt_user, mqtt_pass)
 
 # Define the mqtt callbacks
 mqttc.on_connect = on_connect
@@ -1153,7 +1161,15 @@ mqttc.will_set("comfoair/status",payload="offline", qos=0, retain=True)
 # Connect to the MQTT server
 while True:
     try:
-        mqttc.connect(MQTTServer, MQTTPort, MQTTKeepalive)
+        print("Connecting to MQTT Server...")
+        print(
+        "MQTT:",
+            mqtt_host,
+            mqtt_port,
+            mqtt_user,
+            "***" if mqtt_pass else None
+        )
+        mqttc.connect(mqtt_host, mqtt_port, 60)
         break
     except:
         warning_msg('Can\'t connect to MQTT broker. Retrying in 10 seconds.')
