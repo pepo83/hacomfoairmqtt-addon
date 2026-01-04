@@ -1,6 +1,11 @@
 ARG BUILD_FROM
 FROM $BUILD_FROM
 
+# Python + benötigte Libs
+RUN apk add --no-cache \
+    python3 \
+    py3-paho-mqtt
+
 ENV COMFOAIR_IP="192.168.40.130"
 ENV COMFOAIR_PORT="8899"
 ENV SERIAL_PORT="/config/comfoair"
@@ -29,13 +34,10 @@ ENV HA_AUTO_DISCOVERY_DEVICE_NAME="CA350"
 ENV HA_AUTO_DISCOVERY_DEVICE_MANUFACTURER="Zehnder"
 ENV HA_AUTO_DISCOVERY_DEVICE_MODEL="ComfoAir 350"
 
-RUN apk add --no-cache python3 py3-pip
 
 WORKDIR /app
 
 COPY src/ /app/
-
-RUN pip install --no-cache-dir -r /app/requirements.txt
 
 COPY run.sh /app/run.sh
 RUN chmod +x /app/run.sh
