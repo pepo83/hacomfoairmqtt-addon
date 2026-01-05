@@ -1,7 +1,7 @@
 name: Hacomfoair MQTT
 slug: hacomfoairmqtt
 version: "1.0"
-description: ComfoAir via Waveshare RS232-to-WiFi (TCP)
+description: Home Assistant integration for ComfoAir 350 device via serial or TCP communication and MQTT 
 
 startup: services
 boot: auto
@@ -14,6 +14,7 @@ arch:
   - armhf
 
 options:
+  use_socat: true
   comfoair_host: "192.168.40.130"
   comfoair_port: 8899
   Serial_port: "/tmp/comfoair"
@@ -41,6 +42,7 @@ options:
   ha_discovery: true
 
 schema:
+  use_socat: bool
   comfoair_host: str
   comfoair_port: int
   Serial_port: str
