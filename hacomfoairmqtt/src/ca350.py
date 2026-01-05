@@ -24,42 +24,18 @@ import time
 import os
 import sys
 import json
-import socket
 import logging
+import serial
 
-class TcpSerial:
-    def __init__(self, host, port, timeout=1.0):
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.settimeout(timeout)
-        self.sock.connect((host, port))
-
-    def write(self, data: bytes):
-        return self.sock.sendall(data)
-
-    def read(self, size=1):
-        try:
-            return self.sock.recv(size)
-        except socket.timeout:
-            return b''
-
-    def inWaiting(self):
-        # nicht wirklich verfügbar bei TCP → simulieren
-        return 1
-
-    def close(self):
-        self.sock.close()
 
 logging.basicConfig(level=logging.INFO)
 
 with open("/data/options.json") as f:
     options = json.load(f)
 
-ser = TcpSerial(
-    options["comfoair_host"],
-    options["comfoair_port"]
-)
 
 # Service Configuration
+SerialPort = options['Serial_port']
 RS485_protocol = options['RS485_protocol'] # Protocol type
 refresh_interval = int(options['refresh_interval'])  # Interval in seconds at which data from RS232 will be polled
 enablePcMode = options['enablePcMode']   
@@ -1192,20 +1168,6 @@ mqttc.on_disconnect = on_disconnect
 mqttc.will_set("comfoair/status",payload="offline", qos=0, retain=True)
 
 
-# Connect to the MQTT server
-# print("Connecting to MQTT Server...")
-# print(
-# "MQTT:",
-#     mqtt_host,
-#     mqtt_port,
-#     mqtt_user,
-#     "***" if mqtt_pass else None
-# )
-# mqttc.connect(mqtt_host, mqtt_port, 60)
-# mqttc.loop_start()
-
-
-
 while True:
     try:
         print("Connecting to MQTT Server...")
@@ -1223,40 +1185,46 @@ while True:
         time.sleep(10)
         pass
 
-
-
-if RS485_protocol == False: 
-    if enablePcMode:
-        set_pc_mode(3)
-    else:
-        set_pc_mode(0)  # If PC mode is disabled, deactivate it (in case it was activated in an earlier run)
-if SetUpFanLevelsAtStart:
-    set_fan_levels(Intake=True, Exhaust=True)
-mqttc.loop_start()
-while True:
-    try:
-        if RS485_protocol == False:
-            get_temp()
-            get_fan_status()
-            get_ventilation_status()
-            get_filter_status()
-            get_filter_weeks()
-            get_filter_hours()
-            get_bypass_status()
-            get_preheating_status()
-            get_analog_sensor()
-            get_ewt()
+# Open the serial port
+try:
+    ser = serial.Serial(port = SerialPort, baudrate = 9600, bytesize = serial.EIGHTBITS, parity = serial.PARITY_NONE, stopbits = serial.STOPBITS_ONE)
+except:
+    warning_msg('Opening serial port exception:')
+    warning_msg(sys.exc_info())
+else:
+    if RS485_protocol == False: 
+        if enablePcMode:
+            set_pc_mode(3)
         else:
-            get_temp_rs485()
-            get_fan_status_rs485()
-            get_parameters1_rs485()
-            get_parameters2_rs485()
-        time.sleep(refresh_interval)
-        pass
-    except KeyboardInterrupt:
-        mqttc.loop_stop()
-        ser.close()
-        break
+            set_pc_mode(0)  # If PC mode is disabled, deactivate it (in case it was activated in an earlier run)
+    if SetUpFanLevelsAtStart:
+        set_fan_levels(Intake=True, Exhaust=True)
+    mqttc.loop_start()
+    while True:
+        try:
+            if RS485_protocol == False:
+                get_temp()
+                get_fan_status()
+                get_ventilation_status()
+                get_filter_status()
+                get_filter_weeks()
+                get_filter_hours()
+                get_bypass_status()
+                get_preheating_status()
+                get_analog_sensor()
+                get_ewt()
+            else:
+                get_temp_rs485()
+                get_fan_status_rs485()
+                get_parameters1_rs485()
+                get_parameters2_rs485()
+            time.sleep(refresh_interval)
+            pass
+        except KeyboardInterrupt:
+            mqttc.loop_stop()
+            ser.close()
+            break
+
 
 
 # End of program

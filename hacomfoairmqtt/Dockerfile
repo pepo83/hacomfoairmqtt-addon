@@ -1,7 +1,13 @@
 ARG BUILD_FROM
 FROM $BUILD_FROM
 
-RUN apk add --no-cache python3 py3-virtualenv
+# System tools
+RUN apk add --no-cache \
+    python3 \
+    py3-virtualenv \
+    py3-serial \
+    socat \
+    jq
 
 WORKDIR /app
 

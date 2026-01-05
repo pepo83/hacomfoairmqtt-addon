@@ -16,6 +16,7 @@ arch:
 options:
   comfoair_host: "192.168.40.130"
   comfoair_port: 8899
+  Serial_port: "/tmp/comfoair"
   RS485_protocol: false
   refresh_interval: 10
   enablePcMode: false
@@ -42,6 +43,7 @@ options:
 schema:
   comfoair_host: str
   comfoair_port: int
+  Serial_port: str
   RS485_protocol: bool
   refresh_interval: int
   enablePcMode: bool
