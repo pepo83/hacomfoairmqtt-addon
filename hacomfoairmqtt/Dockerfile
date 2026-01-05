@@ -5,7 +5,7 @@ FROM $BUILD_FROM
 RUN apk add --no-cache \
     python3 \
     py3-virtualenv \
-    py3-serial \
+    py3-pyserial \
     socat \
     jq
 
