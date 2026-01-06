@@ -1197,6 +1197,7 @@ else:
             set_pc_mode(PcMode)
         else:
             print("Invalid PC mode:", PcMode)
+            set_pc_mode(0)
     if SetUpFanLevelsAtStart:
         set_fan_levels(Intake=True, Exhaust=True)
     mqttc.loop_start()

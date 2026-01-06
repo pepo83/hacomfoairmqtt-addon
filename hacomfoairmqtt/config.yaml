@@ -20,7 +20,7 @@ options:
   Serial_port: "/tmp/comfoair"
   RS485_protocol: false
   refresh_interval: 10
-  PcMode: "0"
+  PcMode: 0
   debug: false
   FanOutAbsent: 15
   FanOutLow: 30
@@ -48,7 +48,7 @@ schema:
   Serial_port: str
   RS485_protocol: bool
   refresh_interval: int
-  PcMode: list("0"|"1"|"3"|"4")
+  PcMode: list(0|1|3|4)
   debug: bool
   FanOutAbsent: int
   FanOutLow: int
