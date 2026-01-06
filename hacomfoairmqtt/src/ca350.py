@@ -38,7 +38,7 @@ with open("/data/options.json") as f:
 SerialPort = options['Serial_port']
 RS485_protocol = options['RS485_protocol'] # Protocol type
 refresh_interval = int(options['refresh_interval'])  # Interval in seconds at which data from RS232 will be polled
-enablePcMode = options['enablePcMode']   
+PcMode = int(options['PcMode'])  
 debug = options['debug'] 
 
 #Fan % configuration for each ventilation level
@@ -1193,10 +1193,10 @@ except:
     warning_msg(sys.exc_info())
 else:
     if RS485_protocol == False: 
-        if enablePcMode:
-            set_pc_mode(3)
+        if PcMode in (0, 1, 3, 4):
+            set_pc_mode(PcMode)
         else:
-            set_pc_mode(0)  # If PC mode is disabled, deactivate it (in case it was activated in an earlier run)
+            print("Invalid PC mode:", PcMode)
     if SetUpFanLevelsAtStart:
         set_fan_levels(Intake=True, Exhaust=True)
     mqttc.loop_start()
