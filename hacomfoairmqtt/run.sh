@@ -1,6 +1,12 @@
 #!/usr/bin/with-contenv bashio
 set -e
 
+#export timezone
+if bashio::config.has_value 'timezone'; then
+    export TZ=$(bashio::config 'timezone')
+    bashio::log.info "Timezone set to ${TZ}"
+fi
+
 # MQTT vom Supervisor
 export MQTT_HOST=$(bashio::services mqtt | jq -r '.host')
 export MQTT_PORT=$(bashio::services mqtt | jq -r '.port')
