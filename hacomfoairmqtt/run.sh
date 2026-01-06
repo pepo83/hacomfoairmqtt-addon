@@ -2,8 +2,8 @@
 set -e
 
 #export timezone
-if bashio::config.has_value 'timezone'; then
-    export TZ=$(bashio::config 'timezone')
+if [ -e /etc/localtime ]; then
+    export TZ=$(readlink /etc/localtime | sed 's|.*/zoneinfo/||')
     bashio::log.info "Timezone set to ${TZ}"
 fi
 
