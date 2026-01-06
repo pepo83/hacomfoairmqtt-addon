@@ -6,6 +6,7 @@ description: Home Assistant integration for ComfoAir 350 device via serial or TC
 startup: services
 boot: auto
 init: false
+timezone: true 
 
 arch:
   - amd64

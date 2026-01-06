@@ -1,13 +1,7 @@
 #!/usr/bin/with-contenv bashio
 set -e
 
-#export timezone
-if [ -e /etc/localtime ]; then
-    export TZ=$(readlink /etc/localtime | sed 's|.*/zoneinfo/||')
-    bashio::log.info "Timezone set to ${TZ}"
-fi
-
-# MQTT vom Supervisor
+# MQTT from Supervisor
 export MQTT_HOST=$(bashio::services mqtt | jq -r '.host')
 export MQTT_PORT=$(bashio::services mqtt | jq -r '.port')
 export MQTT_USER=$(bashio::services mqtt | jq -r '.username')
