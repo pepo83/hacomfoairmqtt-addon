@@ -85,13 +85,13 @@ print("")
 
 def debug_msg(message):
     if debug is True:
-        print('{0} DEBUG: {1}'.format(time.strftime("%d-%m-%Y %H:%M:%S", time.gmtime()), message))
+        print('{0} DEBUG: {1}'.format(time.strftime("%d-%m-%Y %H:%M:%S", time.localtime()), message))
 
 def warning_msg(message):
-    print('{0} WARNING: {1}'.format(time.strftime("%d-%m-%Y %H:%M:%S", time.gmtime()), message))
+    print('{0} WARNING: {1}'.format(time.strftime("%d-%m-%Y %H:%M:%S", time.localtime()), message))
 
 def info_msg(message):
-    print('{0} INFO: {1}'.format(time.strftime("%d-%m-%Y %H:%M:%S", time.gmtime()), message))
+    print('{0} INFO: {1}'.format(time.strftime("%d-%m-%Y %H:%M:%S", time.localtime()), message))
 
 # Get the checksum from the serial data (third to last byte)
 def get_returned_checksum(serial_data):
